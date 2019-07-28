@@ -1,1 +1,5 @@
 requests
+scikit-learn
+pandas
+bokeh
+numpy
