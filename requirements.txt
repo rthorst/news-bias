@@ -4,4 +4,4 @@ pandas
 bokeh
 numpy
 webapp2
-inbalanced-learn
+webob

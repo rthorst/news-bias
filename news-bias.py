@@ -13,94 +13,21 @@ import requests
 import urllib
 import json
 import webapp2
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.linear_model import LogisticRegression, Ridge
 from sklearn.externals import joblib
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import f1_score, confusion_matrix
 from bokeh.io import show, output_file
 from bokeh.plotting import figure
 from bokeh.models import HoverTool, ColumnDataSource
 from bokeh.embed import components, json_item
 from bokeh.resources import INLINE
 from bokeh.models.glyphs import Line, Text
+from collections import Counter
 
 def only_ascii(s):
     return "".join([c for c in list(s) if ord(c) <= 128])
-
-
-def build_corpus(sources_per_class=50):
-    """
-    Build a corpus of news articles -- articles.csv -- labeled by their bias
-    If corpus already exists, append the articles.
-
-    Bias ratings based on bias_ratings.csv : we sample evenly from each of 5 classes
-    (left bias .... --> right bias)
-
-    We retrieve articles by querying the google news API for articles from each source.
-    We represent an article by concatenating its title and text.
-    Note that the text is often shortened by the google API.
-    """
-
-    # Load a table of sources and their biases.
-    bias_df = pd.read_csv("bias_ratings.csv")
-
-    # Open corpus output file. If it doesn't exist, make it and write a header.
-    of_p = "articles.csv"
-    if not os.path.exists(of_p):
-        of = open(of_p, "wb")
-        w = csv.writer(of)
-        header = ["source", "bias", "text"]
-        w.writerow(header)
-        of.close()
-    of = open(of_p, "ab")
-    w = csv.writer(of)
-
-    """
-    # For each bias, randomly sample n_sources_per_class of these sources
-    # And query the google news API for articles.
-    # Write these articles to articles.csv
-    """
-    biases = ["left bias", "left-center bias", "least biased", "right-center bias",
-              "right bias"]
-    for bias in biases:
-
-        # Select source_per_class random sources from this bias to sample.
-        possible_sources = bias_df[bias_df.bias == bias].source.values
-        shuffled_indices = np.arange(len(possible_sources))
-        random.shuffle(shuffled_indices)
-        sources = possible_sources[shuffled_indices][:sources_per_class]
-
-        # Iterate over sources.
-        for source in sources:
-
-            # Get articles from google news API.
-            API_KEY = "6aee96ef8754452ebfb3e8b1b33aec80"
-            base_url = "https://newsapi.org/v2/everything"
-            params = {
-                "sources": source, # if multiple sources, pass comma-separated string.
-                "apiKey": API_KEY
-            }
-            url = base_url + "?" + urllib.urlencode(params)
-
-
-            try:
-                result = requests.get(url)
-                result_ascii = only_ascii(result.text)
-                result_json = json.loads(result_ascii)["articles"]
-            except Exception as e: # no articles for this source.
-                print(e)
-                result_json = []
-
-            # Write output.
-            for article_j in result_json:
-
-                try:
-                    out = [source, bias, article_j["title"] + " " + article_j["content"]]
-                    w.writerow(out)
-                except Exception as e: # e.g., empty article.
-                    pass
-
-    of.flush()
-    of.close()
 
 
 def train_model():
@@ -118,22 +45,48 @@ def train_model():
     - encode categorical labels numerically.
     """
 
-    # Load corpus.
-    df = pd.read_csv("articles.csv")
+    # Vars.
+    use_saved_embeddings = True
 
-    # Tf-idf embed the text.
-    tf = TfidfVectorizer(max_features=5000)
-    X = tf.fit_transform(df.text.values)
+    if use_saved_embeddings:
+        X_train = joblib.load("X_train.pkl")
+        X_test = joblib.load("X_test.pkl")
+        y_train = joblib.load("y_train.pkl")
+        y_test = joblib.load("y_test.pkl")
+        tf = joblib.load("vectorizer.pkl")
 
-    # Encode the bias labels categorically.
-    map = {
-        "left bias" : 1,
-        "left-center bias" : 2,
-        "least biased" : 3,
-        "right-center bias": 4,
-        "right bias" : 5
-    }
-    y = [map[bias] for bias in df.bias]
+    else:
+        # Load corpus.
+        print("load corpus")
+        corpus_p = os.path.join("all-the-news", "articles_with_bias.csv")
+        df = pd.read_csv(corpus_p)
+
+        # Tf-idf embed the text.
+        print("create embeddings")
+        tf = TfidfVectorizer(max_features=5000, strip_accents="ascii") # implicitly normalizes to ASCII
+        X = tf.fit_transform(df.content.values)
+
+        # Encode the bias labels categorically.
+        map = {
+            "left bias" : 1,
+            "left-center bias" : 2,
+            "least biased" : 3,
+            "right-center bias": 4,
+            "right bias" : 5
+        }
+        y = [map[bias] for bias in df.bias]
+
+        # Train/test split.
+        print("train-test split")
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
+
+        # Save embeddings.
+        print("save embeddings for next time.")
+        arrs = [X_train, X_test, y_train, y_test, tf]
+        fnames = ["X_train.pkl", "X_test.pkl", "y_train.pkl", "y_test.pkl", "vectorizer.pkl"]
+        for arr, fname in zip(arrs, fnames):
+            joblib.dump(value=arr, filename=fname)
+
 
     """
     Train machine learning model.
@@ -143,9 +96,17 @@ def train_model():
 
     # Train model.
     clf = LogisticRegression(penalty="l2", verbose=1)
-    clf.fit(X, y)
+    clf.fit(X_train, y_train)
 
-    # TODO Evaluate model.
+    # Evaluate model: F score.
+    test_ypred = clf.predict(X_test)
+    f_score = f1_score(y_true=y_test, y_pred=test_ypred, average="micro")
+    print("Test F1 = {:.4f}".format(f_score))
+
+    # Evaluate model: confusion matrix.
+    cm = confusion_matrix(y_true = y_test, y_pred=test_ypred)
+    print(cm)
+
 
     """
     Save components to disk:
@@ -334,5 +295,8 @@ class MainPage(webapp2.RequestHandler):
 
 
 # Run application.
-routes = [('/', MainPage)]
-my_app = webapp2.WSGIApplication(routes, debug=True)
+#routes = [('/', MainPage)]
+#my_app = webapp2.WSGIApplication(routes, debug=True)
+
+if __name__ == "__main__":
+    train_model()
