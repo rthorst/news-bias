@@ -25,6 +25,7 @@ from bokeh.embed import components, json_item
 from bokeh.resources import INLINE
 from bokeh.models.glyphs import Line, Text
 from collections import Counter
+import math
 
 def only_ascii(s):
     return "".join([c for c in list(s) if ord(c) <= 128])
@@ -187,8 +188,11 @@ def make_bokeh_plot(bias_dict):
     p.xgrid.visible = False
     p.ygrid.visible = False
 
-    # remove x axis tick labels (done by setting label fontsize to 0 pt)
-    p.xaxis.major_label_text_font_size = '0pt'
+    # x axis ticks: use bias labels.
+    xticks = np.arange(5)
+    xtick_labels = ["Left Bias", "Left-Center\nBias", "Least Biased", "Right-Center\nBias",
+              "Right Bias"]
+    p.xaxis.major_label_overrides = {t : l for t, l in zip(xticks, xtick_labels)}
 
     """
     Export plot
@@ -222,7 +226,7 @@ def generate_natural_language_explanation(bias_dict):
         confidence = "may have"
 
     # Return a natural language explanation string.
-    explanation = "This article {} has a {} bias".format(confidence, bias_dict)
+    explanation = "This article {} a {}".format(confidence, bias_type)
     return explanation
 
 
@@ -251,10 +255,13 @@ class BiasChecker:
             }
         """
 
-        X = self.tf.transform(s)
-        ypred = self.clf.predict(X)
-
-        return ypred  # TODO look up how to make ypred a dictionary not just most common label.
+        X = self.tf.transform([s])
+        ypred = [math.e**v for v in self.clf.predict_log_proba(X)[0]] # list of probabilities
+        biases = ["left bias", "left-center bias", "least biased", "right-center bias",
+                  "right bias"]
+        bias_dict = {bias : ypred_i for bias, ypred_i in zip(biases, ypred)}
+        print(bias_dict)
+        return bias_dict
 
 
 class MainPage(webapp2.RequestHandler):
@@ -295,8 +302,42 @@ class MainPage(webapp2.RequestHandler):
 
 
 # Run application.
-#routes = [('/', MainPage)]
-#my_app = webapp2.WSGIApplication(routes, debug=True)
+routes = [('/', MainPage)]
+my_app = webapp2.WSGIApplication(routes, debug=True)
 
+"""
+### This main block can be used for quick offline app testing without the google app engine ###
 if __name__ == "__main__":
-    train_model()
+
+    # Classify bias of this article.
+    article_text = "This is some example article text which I think is just pretty neutral."
+    b = BiasChecker()
+    bias_dict = b.classify_bias(article_text) # e.g {"left" : 0.3}  map bias type to probability.
+
+    # Produce bokeh plot of the probabilities.
+    resources, script, div = make_bokeh_plot(bias_dict=bias_dict)
+
+    # Generate a natural language explanation of the result.
+    explanation = generate_natural_language_explanation(bias_dict=bias_dict)
+
+    # Load HTML template.
+    html_p = os.path.join("html", "home.html")
+    html = open(html_p, "r").read()
+
+    # Replace placeholders in HTML with calculated values.
+    placeholder_to_value = {
+        "<!--bokeh_plot-->": div,
+        "<!--bokeh_resources-->": resources,
+        "<!--bokeh_script-->": script,
+        "<!--bias_explanation-->": explanation
+    }
+    for placeholder, value in placeholder_to_value.items():
+        html = html.replace(placeholder, value)
+        html = only_ascii(html)
+
+    # Write test webpage.
+    out_p = os.path.join("html", "result.html")
+    with open(out_p, "w") as of:
+        of.write(html)
+        print("wrote to {}".format(out_p))
+"""

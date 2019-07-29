@@ -29,7 +29,10 @@
 		position: relative;
 	}
 
-	.robertBox {
+	.robertButton{
+		background-color: black;
+		color: white;
+		font-size: 20px;
 	}
 	</style>
 
@@ -87,9 +90,9 @@
 					<br><br>
 					<h3>Text of the Article:</h3>
 					<form action="/" method="get" id="article_form" class="pure-form pure-form-stacked">
-						<input type="text" name="article_text" height="800">
+						<input type="text" name="article_text" style="height: 100px; width: 200 px;">
 						<br><br>
-                 		<input type="submit" class="site-btn sb-dark mr-4 mb-2">Check Bias!</button>
+                 		<button type="submit" class="site-btn sb-dark mr-4 mb-2">Check Bias!</button>
                     </form>
 
 				</div>
@@ -105,15 +108,12 @@
 	<section class="portfolio-section">
 		<div class="container">
 		</div>
-		<div class="container-fluid p-md-0 ">
-			<div class="row portfolios-area">
-
+		
+				<p align="center"><!--bias_explanation--></p><br><br>
 				<!--bokeh_script-->
-				<!--bias_explanation-->
-				<!--bokeh_plot-->
-        }
-			</div>
-		</div>
+				<p align="center"><center><!--bokeh_plot--></center></p>
+        
+
 	</section>
 	<!-- portfolio section end -->
 
