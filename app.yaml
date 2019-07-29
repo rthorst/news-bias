@@ -12,5 +12,5 @@ skip_files:
 - X_test.pkl
 - y_train.pkl
 - y_test.pkl
-- articles.csv
-- articles\\*
+- all-the-news//articles.csv
+- all-the-news//*

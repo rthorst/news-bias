@@ -4,21 +4,21 @@ activate py27 (conda)
 C:\users\hp user\news_app\scripts   --> type activate in shell.
 """
 
-import pandas as pd
+#import pandas as pd
 import numpy as np
 import random
 import os
 import csv
-import requests
-import urllib
+#import requests
+#import urllib
 import json
 import webapp2
-from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
-from sklearn.linear_model import LogisticRegression, Ridge
-from sklearn.externals import joblib
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import f1_score, confusion_matrix
-from bokeh.io import show, output_file
+#from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
+#from sklearn.linear_model import LogisticRegression, Ridge
+#from sklearn.externals import joblib
+#from sklearn.model_selection import train_test_split
+#from sklearn.metrics import f1_score, confusion_matrix
+#from bokeh.io import show, output_file
 from bokeh.plotting import figure
 from bokeh.models import HoverTool, ColumnDataSource
 from bokeh.embed import components, json_item
