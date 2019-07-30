@@ -77,8 +77,11 @@ if pd:
     DATETIME_TYPES.add(pd.Period)
     DATETIME_TYPES.add(type(pd.NaT))
 
-NP_EPOCH = np.datetime64(0, 'ms')
-NP_MS_DELTA = np.timedelta64(1, 'ms')
+## Robert: modified these for backwards compatibility with Numpy 1.6
+NP_EPOCH = "foo"
+NP_MS_DELTA = "foo"
+#NP_EPOCH = np.datetime64(0, 'ms')
+#NP_MS_DELTA = np.timedelta64(1, 'ms')
 
 DT_EPOCH = dt.datetime.utcfromtimestamp(0)
 
