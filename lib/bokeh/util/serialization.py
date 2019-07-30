@@ -64,7 +64,7 @@ DATETIME_TYPES = set([
     dt.datetime,
     dt.date,
     dt.time,
-    np.datetime64,
+    #np.datetime64, # ROBERT changed
 ])
 
 if pd:
@@ -75,9 +75,9 @@ if pd:
     DATETIME_TYPES.add(_pd_timestamp)
     DATETIME_TYPES.add(pd.Timedelta)
     DATETIME_TYPES.add(pd.Period)
-    DATETIME_TYPES.add(type(pd.NaT))
+    #DATETIME_TYPES.add(type(pd.NaT)) # ROBERT changed
 
-## Robert: modified these for backwards compatibility with Numpy 1.6
+## Robert: I commented this out.
 NP_EPOCH = "foo"
 NP_MS_DELTA = "foo"
 #NP_EPOCH = np.datetime64(0, 'ms')

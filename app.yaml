@@ -7,6 +7,8 @@ handlers:
 libraries:
 - name: numpy
   version: "1.6.1"
+- name: PIL
+  version: latest
 skip_files:
 - X_train.pkl
 - X_test.pkl
