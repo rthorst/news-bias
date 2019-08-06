@@ -14,7 +14,7 @@ For several years, ratings of the bias of common news sources have been accumnul
 This is a sensitive topic, so it's important to be realistic about the performance of this model. Based on experiments with the training corpus, the model has an F1-score of 0.73, which very roughly means that in a five-category guess between "left bias", "left-center bias", "least biased", "right-center biased", and "right biased", the model is right about 3/4 of the time. Thus, it's fair to say that the model is reasonably accurate, but, can still make mistakes. It is also possible that the model could make more mistakes on types of text that the model was not trained on, such as blogs or social media posts. We did work hard to make sure that the model is not biased to guess any one of these classes more often than usual.
 
 # Some Details
-The function train_model() should be executed first. This trained an L2-logistic regression classifier to use the text of news articles (represented as tf-idf unigram embeddings) to classify the bias of the article, on a scale from 1 (left bias) --> 5 (right bias). 
+The function train_model() should be executed first. This trains an L2-logistic regression classifier to use the text of news articles (represented as tf-idf unigram embeddings) to classify the bias of the article, on a scale from 1 (left bias) --> 5 (right bias). 
 
 The function index() can be thought of as the main pipeline. This function reads the text of an article from an HTML form, classifies its bias using the trained model, and outputs a webpage with explanation of the bias classification.
 
