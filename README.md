@@ -1,6 +1,8 @@
 # New Bias Classifier
 Determine if a news article is biased! This code implements a classifier to take the text of a news article, and guess whether it is left- or right-biased.
 
+(screenshot.png)
+
 # Quickstart
 main.py implements a flask app to classify the bias in a news article.
 
@@ -22,7 +24,7 @@ A related project is at http://www.areyoufakenews.com/
 
 This classifier can be extended in several ways. Some suggestions:
 
-* More diverse training corpus. The training corpus is quite large but predmoninantly from several large newspaper sources. Including many more sources (blogs, etc.) can likely improve the model.
+* More diverse training corpus. The training corpus is quite large but predominantly from several large newspaper sources. Including many more sources (blogs, etc.) can likely improve the model.
 
 * Deep learning. The classifier currently represents words in a way that is blind to their order of occurence. A deep learning approach, especially RNN-based, can likely perform better.
 
