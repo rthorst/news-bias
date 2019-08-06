@@ -1,7 +1,7 @@
 # New Bias Classifier
 Determine if a news article is biased! This code implements a classifier to take the text of a news article, and guess whether it is left- or right-biased.
 
-(screenshot.png)
+![Image of the classifier](screenshot.png)
 
 # Quickstart
 main.py implements a flask app to classify the bias in a news article.
