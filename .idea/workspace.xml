@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="4039160c-2efc-48aa-b1d2-b06f39331004" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/app.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/appengine_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/appengine_config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/html/about.html" beforeDir="false" />
@@ -3295,9 +3296,9 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="1">
-    <option name="x" value="856" />
-    <option name="y" value="67" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-11" />
+    <option name="y" value="-11" />
     <option name="width" value="1029" />
     <option name="height" value="747" />
   </component>
@@ -3336,15 +3337,15 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1565095338160</updated>
-      <workItem from="1565095355624" duration="4921000" />
+      <workItem from="1565095355624" duration="5089000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="4921000" />
+    <option name="totallyTimeSpent" value="5089000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="571" y="45" width="686" height="498" extended-state="1" />
+    <frame x="571" y="45" width="686" height="498" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Favorites" side_tool="true" weight="0.32983023" />
