@@ -2,7 +2,7 @@
 Determine if a news article is biased! This code implements a classifier to take the text of a news article, and guess whether it is left- or right-biased.
 
 <p align="center">
-![Image of the classifier](screenshot.PNG)
+<img src = "screenshot.PNG">
 </p>
 
 # Quickstart
